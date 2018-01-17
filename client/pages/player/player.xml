@@ -1,0 +1,53 @@
+<view class="player col-flex">
+  <view class="flex1">
+    <image src="http://img02.tooopen.com/images/20150928/tooopen_sy_143912755726.jpg" class="player-bg"></image>
+    <view class="title">
+      001 | 你能从这堂课学到什么？
+    </view>
+    <view class="body-view flex">
+      <view class="time">{{currentTime}}</view>
+      <view class="base-slider">
+        <view class="slider-bg"></view>
+        <view class="player-slider" style="width: {{playerWidth}}px;">
+          <view class="slider-block" style="float: right;" bind:touchstart="touchStartTime" bind:touchend="touchEndTime" bind:touchmove="changePlayerTime">
+            <view class="block-center"></view>
+          </view>
+        </view>
+
+      </view>
+      <view class="time total">{{duration}}</view>
+    </view>
+
+    <view class="player-controls flex">
+      <view class="control-tab"><text class="prev iconfont icon-nvxingicon-shangyiji"></text></view>
+      <view class="control-tab play-on" bindtap="controlPlayStatus">
+        <block wx:if="{{playing}}">
+          <text class="playing iconfont icon-nvxingicon-zanting"></text>
+        </block>
+        <block wx:else>
+          <text class="playing iconfont icon-nvxingicon-bofang"></text>
+        </block>
+      </view>
+      <view class="control-tab"><text class="next iconfont icon-nvxingicon-xiayiji"></text></view>
+    </view>
+  </view>
+  <view class="tab flex">
+    <view class="flex1">
+      <navigator url="/pages/player/list/list" hover-class="none" class="col-flex">
+        <text class="arrow iconfont icon-nvxingicon-bofangliebiao"></text>
+        <view class="tab-name">播放列表</view>
+      </navigator>
+    </view>
+    <view class="flex1 col-flex">
+      <text class="arrow iconfont icon-nvxingicon-wengao"></text>
+      <view class="tab-name">文稿</view>
+    </view>
+    <view class="flex1 col-flex">
+      <text class="arrow iconfont icon-nvxingicon-fenxiang"></text>
+      <view class="tab-name">分享</view>
+    </view>
+  </view>
+</view>
+
+
+

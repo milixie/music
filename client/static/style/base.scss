@@ -1,0 +1,24 @@
+/**app.wxss**/
+@import "dpl/_icon.scss";
+page {
+	width: 100%;
+	height: 100%;
+	background: #FFFCF9;
+}
+
+.flex {
+	display: flex;
+}
+
+.col-flex {
+	display: flex;
+	flex-direction: column;
+}
+
+.flex1 {
+	flex: 1;
+}
+
+.by-center {
+	text-align: center;
+}

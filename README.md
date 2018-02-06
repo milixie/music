@@ -75,7 +75,7 @@ this.backgroundPlayer.title = this.data.playerData.name;
 
 这里有一个问题要注意一下：
 
-在设置新音频的 `src` 的时候，必须设置相应的 `title	`，否则的话在iOS上面会报错的
+在设置新音频的 `src` 的时候，必须设置相应的 `title	`，否则的话在iOS上面会报错不能播放的，设置了 `title` 后，iOS机上不会有拨错信息，但是安卓机上仍然有报错信息，但是不会影响播放
 
 
 3.音频播放时，动态设置当前播放的时长和相应的进度条
@@ -155,11 +155,84 @@ e.changedTouches[0].pageX
 
 ```
 
+5.设置 播放/暂停 状态
+
+```$xslt
+
+// 使用的是背景音频的 play() / pause() 的方法
+
+/**
+   * 改变播放状态
+   */
+  changePlayerStatus() {
+    this.setData({
+      playing: !this.data.playing
+    });
+    if (this.data.playing) {
+      this.backgroundPlayer.play();
+    } else {
+      this.backgroundPlayer.pause();
+    }
+  },
+  
+  // 监听播放/暂停状态 使用 onPlay() 和 onPause() 方法
+  this.backgorundPlayer.onPlay(() => {
+  	
+  });
+	this.backgorundPlayer.onPause(() => {
+			
+	});
+```
+
+6.实现上一首/下一首功能
+
+只需要改变音频的src就可以自动播放了，找到当前列表中对应的播放id的上一首/下一首，将src设置为相应的src即可
+
+```$xslt
+prev() {
+	if (this.data.i === 0) {
+		console.log('这就是第一首');
+		return;
+	}
+	if (songs[this.data.i - 1]) {
+		this.backgroundPlayer.src = songs[this.data.i - 1].src;
+		this.backgroundPlayer.title = songs[this.data.i - 1].name;
+		this.setData({
+			i: this.data.i - 1
+		})
+	}
+}
+
+next() {
+	if (this.data.i === songs.length - 1) {
+		console.log('这就是第一首');
+		return;
+	}
+	if (songs[this.data.i + 1]) {
+		this.backgroundPlayer.src = songs[this.data.i + 1].src;
+		this.backgroundPlayer.title = songs[this.data.i + 1].name;
+		this.setData({
+			i: this.data.i + 1
+		})
+	}
+}
+
+```
 
 
 
+### 总结
 
+在开发过程中需要注意的问题
 
+1. 背景音频必须放在全局下
+
+2. 设置音频src的时候必须设置相应的title
+
+3. 如果背景音频的一系列的控制逻辑（onPlay / onPause / onWaiting / onError / onTimeUpdate）等处理函数放在onLoad函数中的话，以下一种情况下会有一个问题
+
+	比如，当前页面是player播放器，该页面上有一个按钮链接到一个新的页面（播放列表页面），在这个播放列表页面里面，点击播放列表中的任何一个音频切换音频或者点击当前的音频，都要回到player播放器这个页面，这个时候只能使用 navigateTo 到player，这个player跟一开始的那个player不是同一个页面，如果点击返回按钮的话回到最初的player页面，那个页面会维持在音频切换前的状态，而不会根据切换后的音频的状态展示页面和音频进度之类的，这个时候的解决方案就是使用onShow去写；
+而且这种情况还会造成另外一种情况就是点击player上面的播放列表，在播放列表再切换音频到player页面，再次进入到播放列表页面，以此循环，会使得navigate的页面太多，而微信小程序只允许5层，这个会导致用户这样连续点的话到后面就无法点击了，暂时没有什么好的解决方案，但是有一种方案可以尝试一下，就是将player和播放列表放在同一个页面，但是会有另外一个问题，在播放列表上点击返回按钮会直接回到player之前的页面，而不会回到player页面；如果产品上播放列表是一个不全屏的弹层的话就不会存在这些问题了
 
 
 

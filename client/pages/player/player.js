@@ -21,8 +21,7 @@ Page({
   },
   async onLoad() {
     const that = this;
-    // this.backgroundPlayer = app.globalData.backgroundPlayer;
-    this.backgroundPlayer = wx.getBackgroundAudioManager();
+    this.backgroundPlayer = app.globalData.backgroundPlayer;
     this.setData({
       playerData: data.songs[this.data.i]
     });

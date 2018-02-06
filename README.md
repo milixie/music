@@ -65,6 +65,18 @@ async onLoad() {
 }
 ```
 
+2.音频播放
+
+设置音频的`src` 就可以了
+```$xslt
+this.backgroundPlayer.src = this.data.playerData.src;
+this.backgroundPlayer.title = this.data.playerData.name;
+```
+
+这里有一个问题要注意一下：
+
+在设置新音频的 `src` 的时候，必须设置相应的`title	`，否则的话在iOS上面会报错的
+
 
 
 

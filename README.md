@@ -75,7 +75,88 @@ this.backgroundPlayer.title = this.data.playerData.name;
 
 这里有一个问题要注意一下：
 
-在设置新音频的 `src` 的时候，必须设置相应的`title	`，否则的话在iOS上面会报错的
+在设置新音频的 `src` 的时候，必须设置相应的 `title	`，否则的话在iOS上面会报错的
+
+
+3.音频播放时，动态设置当前播放的时长和相应的进度条
+
+```
+// 当前音频的播放总时长
+this.duration = this.backgroundPlayer.duration;
+
+// 当前音频的播放时长
+this.currentTime = this.backgroundPlayer.currentTime;
+
+// 在播放的过程中，通过 onTimeUpdate 方法实时获取，并且动态赋值相应的值
+
+this.backgroundPlayer.onTimeUpdate(() => {
+	this.duration = this.backgroundPlayer.duration;
+	this.currentTime = this.backgroundPlayer.currentTime;
+	
+	this.setData({
+		currentTime: xxx,
+		duration: xxx,
+		playerWidth: this.currentTime / this.duration * 100 的百分比
+	});
+});
+
+```
+
+4.音频拖拽播放 --- 使用音频的 `seek` 方法
+
+```$xslt
+
+// 拖拽
+记录拖拽开始位置以及拖拽过程中移动的位置和拖拽结束的位置
+e.changedTouches[0].pageX
+
+/**
+   * 拖拽开始，记录当前拖拽的pageX
+   * @param e
+   */
+  touchStartProgress(e) {
+    this.touchStart = e.changedTouches[0].pageX;
+    this.progress = parseInt(this.data.progressWidth * 250 / 100);
+  },
+  /**
+   * 拖拽中，记录当前的pageX，并且与开始拖拽的点以及播放的当前进度条长度进行计算，得出拖拽的长度，重设播放进度条
+   * @param e
+   */
+  touchMoveProgress(e) {
+    let spacing = this.progress + e.changedTouches[0].pageX - this.touchStart;
+    if (spacing >= 250) {
+      spacing = 250;
+    } else if (spacing <= 0) {
+      spacing = 0;
+    }
+    const progressWidth = parseFloat(spacing / 250 * 100).toFixed(2);
+    this.setData({
+      progressWidth
+    });
+  },
+  /**
+   * 拖拽结束后，记录当前的pageX，并且与开始拖拽的点以及播放的当前进度条长度进行计算，得出拖拽的长度，重设播放进度条
+   * @param e
+   */
+  touchEndProgress(e) {
+    let spacing = this.progress + e.changedTouches[0].pageX - this.touchStart;
+    if (spacing >= 250) {
+      spacing = 250;
+    } else if (spacing <= 0) {
+      spacing = 0;
+    }
+    const progressWidth = parseFloat(spacing / 250 * 100).toFixed(2);
+    this.setData({
+      progressWidth
+    });
+    this.currentTime = progressWidth * this.duration / 100 || 0;
+    this.backgroundPlayer.seek(this.currentTime / 1000);  // 使用seek方法实现音频拖拽后继续播放功能
+  },
+
+```
+
+
+
 
 
 

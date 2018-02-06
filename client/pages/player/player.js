@@ -21,10 +21,12 @@ Page({
   },
   async onLoad() {
     const that = this;
-    this.backgroundPlayer = app.globalData.backgroundPlayer;
+    // this.backgroundPlayer = app.globalData.backgroundPlayer;
+    this.backgroundPlayer = wx.getBackgroundAudioManager();
     this.setData({
       playerData: data.songs[this.data.i]
     });
+    console.log(this.data.playerData);
     // 给背景音频赋值
     this.backgroundPlayer.src = this.data.playerData.src;
     this.backgroundPlayer.title = this.data.playerData.name;

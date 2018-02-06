@@ -1,1 +1,3 @@
-<view>this is test</view>
+<view>
+  <button bindtap="linkToPlayer">链接到音频播放器</button>
+</view>

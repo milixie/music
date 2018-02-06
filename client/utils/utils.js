@@ -31,15 +31,15 @@ const formatTime = (date, format) => {
 const rpxIntoPx = unit => {
   const res = wx.getSystemInfoSync()
   return unit * res.windowWidth / 750
-}
+};
 
 const pxIntoRpx = unit => {
   const res = wx.getSystemInfoSync()
   return unit * 750 / res.windowWidth
-}
+};
 
 module.exports = {
   formatTime,
   rpxIntoPx,
   pxIntoRpx
-}
+};

@@ -1,114 +1,94 @@
 .player {
-	text-align: center;
 	width: 100%;
 	height: 100%;
-	.player-bg {
-		margin-top: 80rpx;
-		width: 360rpx;
-		height: 480rpx;
-		box-shadow: 0 20rpx 30rpx 0 rgba(148,106,55,0.25);
-		border-radius: 16rpx;
-	}
-	.title {
-		font-family: PingFangSC-Regular;
-		font-size: 30rpx;
-		color: #333333;
-		margin: 20rpx 0 50rpx;
-	}
-	.body-view {
-		align-items: center;
-		justify-content: center;
-		.time {
-			width: 80rpx;
-			font-family: SanFranciscoDisplay-Medium;
-			font-size: 28rpx;
-			color: #AF926E;
-			&.total {
-				color: #999999;
+	.backdrop {
+		margin-bottom: 100rpx;
+		.slide-wrap {
+			height: 760rpx;
+			.sub-slide {
 			}
-		}
-		.base-slider {
-			width: 500rpx;
-			height: 32rpx;
-			margin: 0 20rpx;
-			position: relative;
-			z-index: 2;
-			.slider-bg {
-				position: absolute;
-				top: 14rpx;
-				left: 0;
-				width: 500rpx;
-				height: 4rpx;
-				background: rgba(175, 146, 110, 0.2);
-				border-radius: 8rpx;
-			}
-			.player-slider {
-				position: absolute;
-				left: 0;
-				top: 14rpx;
-				width: 0;
-				height: 4rpx;
-				background-image: linear-gradient(-90deg, #D8C4A7 0%, #AF926E 100%);
-				background: #AF926E;
-				border-radius: 8rpx;
-				z-index: 3;
-			}
-			.slider-block {
-				position: relative;
-				top: -14rpx;
-				left: 16rpx;
-				width: 32rpx;
-				height: 32rpx;
+			.lyric {
 				text-align: center;
-			}
-			.block-center {
-				position: absolute;
-				top: 8rpx;
-				left: 8rpx;
-				width: 16rpx;
-				height: 16rpx;
-				border-radius: 50%;
-				background: #AF926E;
+				overflow: scroll;
+				font-size: 28rpx;
+				color: #fff;
+				height: 560rpx;
+				padding-top: 100rpx;
+				line-height: 2;
 			}
 		}
-	}
-	.tab {
-		height: 100rpx;
-		background: #fff;
-		align-items: center;
-		.tab-name {
-			font-family: PingFangSC-Regular;
-			font-size: 20rpx;
-			color: #666666;
+		.slide-image {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			margin-top: -200rpx;
+			margin-left: -200rpx;
+			width: 400rpx;
+			height: 400rpx;
+			box-sizing: border-box;
+			border: 60rpx solid #000;
+			border-radius: 50%;
 		}
-		.arrow {
-			color: #C9C1B8;
-		}
 	}
-	.player-controls {
+	.progress-wrap {
+		padding: 0 20rpx;
+		height: 30px;
+		line-height: 30px;
 		justify-content: center;
-		margin-top: 120rpx;
-		.control-tab {
-			width: 160rpx;
-			height: 160rpx;
-			line-height: 160rpx;
-			&.play-on {
-				margin: 0 40rpx;
+		.begin, .end {
+			color: #ccc;
+			font-size: 24rpx;
+			margin: 0 20rpx;
+		}
+		.progress {
+			position: relative;
+			.progress-bg {
+				position: absolute;
+				left: 0;
+				top: 50%;
+				margin-top: -2px;
+				width: 100%;
+				height: 4px;
+				background: #999;
+				border-radius: 4px;
 			}
-			.prev {
-				color: #AF926E;
-				font-size: 40rpx;
+			.progress-bar {
+				position: absolute;
+				left: 0;
+				top: 50%;
+				margin-top: -2px;
+				width: 30%;
+				height: 4px;
+				background: #eee;
+				border-radius: 4px;
+				.control {
+					position: absolute;
+					right: -8px;
+					top: -6px;
+					float: right;
+					width: 16px;
+					height: 16px;
+					background: #eee;
+					border-radius: 50%;
+				}
 			}
-			.playing {
-				color: #AF926E;
-				font-size: 200rpx;
-				position:relative;
-				left:-20rpx;
-			}
-			.next {
-				color: #AF926E;
-				font-size: 40rpx;
-			}
+		}
+	}
+	.option {
+		margin: 100rpx 0 50rpx;
+		justify-content: space-around;
+		align-items: center;
+		.play {
+			border: 1rpx solid #fff;
+			width: 100rpx;
+			height: 100rpx;
+			line-height: 100rpx;
+			text-align: center;
+			border-radius: 50%;
+		}
+		.icon {
+			color: #fff;
+			font-size: 50rpx;
 		}
 	}
 }

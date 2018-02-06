@@ -36,18 +36,20 @@
 		line-height: 30px;
 		justify-content: center;
 		.begin, .end {
+			width: 100rpx;
 			color: #ccc;
 			font-size: 24rpx;
-			margin: 0 20rpx;
+			text-align: center;
 		}
 		.progress {
 			position: relative;
 			.progress-bg {
 				position: absolute;
-				left: 0;
+				left: 50%;
 				top: 50%;
 				margin-top: -2px;
-				width: 100%;
+				margin-left: -125px;
+				width: 250px;
 				height: 4px;
 				background: #999;
 				border-radius: 4px;
@@ -57,7 +59,7 @@
 				left: 0;
 				top: 50%;
 				margin-top: -2px;
-				width: 30%;
+				width: 0;
 				height: 4px;
 				background: #eee;
 				border-radius: 4px;

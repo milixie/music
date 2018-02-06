@@ -2,7 +2,7 @@
   <view class="backdrop flex1">
     <swiper class="slide-wrap" indicator-dots="true" indicator-color="#999" indicator-active-color="#ccc">
       <swiper-item class="sub-slide">
-        <image animation="{{animateData}}" src="http://7xj5et.com1.z0.glb.clouddn.com/gallery/img/1.jpg" mode="aspectFit" class="slide-image"/>
+        <image animation="{{animateData}}" src="{{playerData.image}}" mode="aspectFit" class="slide-image"/>
       </swiper-item>
       <swiper-item class="sub-slide">
         <scroll-view scroll-y="true" class="lyric">
@@ -14,20 +14,27 @@
     </swiper>
   </view>
   <view class="progress-wrap flex">
-    <view class="begin">00:23</view>
+    <view class="begin">{{currentTime}}</view>
     <view class="progress flex1">
       <view class="progress-bg"></view>
-      <view class="progress-bar">
-        <view class="control"></view>
+      <view class="progress-bar" style="width: {{progressWidth}}%;">
+        <view class="control" bind:touchstart="touchStartProgress" bind:touchmove="touchMoveProgress" bind:touchend="touchEndProgress"></view>
       </view>
     </view>
-    <view class="end">04:32</view>
+    <view class="end">{{duration}}</view>
   </view>
   <view class="option flex">
     <view class="share"><text class="icon iconfont icon-nvxingicon-fenxiang"></text></view>
-    <view class="prev"><text class="icon iconfont icon-nvxingicon-shangyiji"></text></view>
-    <view class="play"><text class="icon iconfont icon-nvxingicon-bofanggai"></text></view>
-    <view class="next"><text class="icon iconfont icon-nvxingicon-xiayiji"></text></view>
+    <view class="prev" bindtap="prev"><text class="icon iconfont icon-nvxingicon-shangyiji"></text></view>
+    <view class="play" bindtap="changePlayerStatus">
+      <block wx:if="{{playing}}">
+        <text class="icon iconfont icon-nvxingicon-zantinggai"></text>
+      </block>
+      <block wx:else>
+        <text class="icon iconfont icon-nvxingicon-bofanggai"></text>
+      </block>
+    </view>
+    <view class="next" bindtap="next"><text class="icon iconfont icon-nvxingicon-xiayiji"></text></view>
     <view class="player-list"><text class="icon iconfont icon-nvxingicon-bofangliebiao"></text></view>
   </view>
 </view>

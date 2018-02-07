@@ -270,6 +270,27 @@ this.backgroundPlayer.onTimeUpdate(() => {
 });
 ```
 
+10.音频自然播放结束后，自动切换到下一首，使用 `onEnded` 方法
+
+```
+this.backgroundPlayer.onEnded(() => {
+	// 如果当前音频是最后一首，不处理，否则的话，重新复制url就可以了
+})
+
+```
+
+11.在iOS上面锁屏状态下切换音频，使用 `onPrev 、 onNext` 这个两个方法
+
+```
+this.backgroundPlayer.onPrev(() => {
+	that.prev()  //直接调用上一首 / 下一首的方法即可
+});
+
+this.backgroundPlayer.onNext(() => {
+	that.next()  //直接调用上一首 / 下一首的方法即可
+});
+```
+
 
 8.自定义组件
 

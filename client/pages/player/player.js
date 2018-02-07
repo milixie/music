@@ -19,6 +19,7 @@ Page({
     progressWidth: 0,
     playing: false,
     waiting: true,
+    drag: false,
     i: 0,
     toast: {
       show: false,
@@ -34,13 +35,15 @@ Page({
     // 给背景音频赋值
     this.backgroundPlayer.src = this.data.playerData.src;
     this.backgroundPlayer.title = this.data.playerData.name;
+    this.backgroundPlayer.coverImgUrl = this.data.playerData.image;
     this.duration = this.backgroundPlayer.duration || 0;
 
     // 音频开始播放
     this.backgroundPlayer.onPlay(() => {
       that.setData({
         playing: true
-      })
+      });
+      this.duration = this.backgroundPlayer.duration || 0;
     });
 
     // 音频播放进度控制
@@ -49,6 +52,13 @@ Page({
       that.currentTime = that.backgroundPlayer.currentTime * 1000;
 
       const {duration, currentTime, progressWidth} = this.setProgress(that.duration, that.currentTime);
+      if (that.data.drag) {
+        that.setData({
+          currentTime,
+          waiting: false
+        });
+        return;
+      }
       that.setData({
         duration,
         currentTime,
@@ -62,6 +72,33 @@ Page({
       that.setData({
         playing: false
       })
+    });
+
+    // 自然播放后，自动切换到下一首
+    this.backgroundPlayer.onEnded(() => {
+      if (that.data.i < Number(data.songs && data.songs.length - 1)) {
+        that.setData({
+          playerData: data.songs[that.data.i + 1],
+          i: that.data.i + 1
+        });
+        that.backgroundPlayer.src = that.data.playerData.src;
+        that.backgroundPlayer.title = that.data.playerData.name;
+        that.backgroundPlayer.coverImgUrl = that.data.playerData.image;
+      } else {
+        const { duration } = this.setProgress(that.duration, 0);
+        console.log(duration, '---d')
+        that.setData({
+          duration
+        });
+      }
+    });
+
+    this.backgroundPlayer.onPrev(() => {
+      that.prev();
+    });
+
+    this.backgroundPlayer.onNext(() => {
+      that.next();
     });
 
     this.backgroundPlayer.onWaiting(() => {
@@ -134,6 +171,7 @@ Page({
    * @param e
    */
   touchStartProgress(e) {
+    this.setData({ drag: true });
     this.touchStart = e.changedTouches[0].pageX;
     this.progress = parseInt(this.data.progressWidth * 250 / 100);
   },
@@ -166,7 +204,8 @@ Page({
     }
     const progressWidth = parseFloat(spacing / 250 * 100).toFixed(2);
     this.setData({
-      progressWidth
+      progressWidth,
+      drag: false
     });
     this.currentTime = progressWidth * this.duration / 100 || 0;
     this.backgroundPlayer.seek(this.currentTime / 1000);
@@ -197,6 +236,7 @@ Page({
     if (data.songs && data.songs[currentIndex]) {
       this.backgroundPlayer.src = data.songs[currentIndex].src;
       this.backgroundPlayer.title = data.songs[currentIndex].name;
+      this.backgroundPlayer.coverImgUrl = data.songs[currentIndex].image;
       this.setData({
         playerData: data.songs[currentIndex],
         i: currentIndex
@@ -217,11 +257,25 @@ Page({
     if (data.songs && data.songs[currentIndex]) {
       this.backgroundPlayer.src = data.songs[currentIndex].src;
       this.backgroundPlayer.title = data.songs[currentIndex].name;
+      this.backgroundPlayer.coverImgUrl = data.songs[currentIndex].image;
       this.setData({
         playerData: data.songs[currentIndex],
         i: currentIndex
       });
-      console.log(data.songs[currentIndex]);
     }
+  },
+
+  async download() {
+    try {
+      const result = await wechat.downloadFile({
+        url: data.songs[this.data.i].src
+      });
+      if (result && result.statusCode === 200) {
+
+      }
+    } catch (err) {
+      console.log(err)
+    }
+
   }
 });

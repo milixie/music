@@ -208,6 +208,18 @@ function createAnimation({origin, duration, delay, timingFunction}) {
     timingFunction
   })
 }
+
+function downloadFile({url, header}) {
+  return new Promise((resolve, reject) => {
+    wx.downloadFile({
+      url,
+      header,
+      success: resolve,
+      fail: reject
+    })
+  });
+}
+
 module.exports = {
   ...wx,
   login,
@@ -226,5 +238,6 @@ module.exports = {
   openLocation,
   showLoading,
   request,
-  createAnimation
+  createAnimation,
+  downloadFile
 };

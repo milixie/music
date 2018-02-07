@@ -1,3 +1,6 @@
+<import src="../../common/toast/toast.wxml"/>
+<template is="toast" data="{{toast}}"/>
+
 <view class="player col-flex">
   <view class="backdrop flex1">
     <swiper class="slide-wrap" indicator-dots="true" indicator-color="#999" indicator-active-color="#ccc">
@@ -27,7 +30,10 @@
     <view class="share"><text class="icon iconfont icon-nvxingicon-fenxiang"></text></view>
     <view class="prev" bindtap="prev"><text class="icon iconfont icon-nvxingicon-shangyiji"></text></view>
     <view class="play" bindtap="changePlayerStatus">
-      <block wx:if="{{playing}}">
+      <block wx:if="{{waiting}}">
+        <image src="../../static/image/loading.svg" class="loading"></image>
+      </block>
+      <block wx:elif="{{playing}}">
         <text class="icon iconfont icon-nvxingicon-zantinggai"></text>
       </block>
       <block wx:else>

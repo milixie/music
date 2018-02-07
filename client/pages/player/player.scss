@@ -87,6 +87,13 @@
 			line-height: 100rpx;
 			text-align: center;
 			border-radius: 50%;
+			.loading {
+				position: relative;
+				top: 50%;
+				width: 60rpx;
+				height: 60rpx;
+				transform: translateY(-50%);
+			}
 		}
 		.icon {
 			color: #fff;

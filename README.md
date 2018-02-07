@@ -219,6 +219,115 @@ next() {
 
 ```
 
+7.在退出小程序后，音频在微信后台播放，点击后台查看的时候，显示背景图，这个背景图该怎么设置呢
+
+```$xslt
+this.backgroundPlayer.coverImgUrl = xxx
+```
+
+这里需要注意以下几点
+- 在设置完src后就实时的将coverImgUrl也设置上，在onPlay里面也需要设置coverImgUrl，否则的话iOS不会显示出来
+
+- 点击上一首/下一首切换音频的时候，如果在重新设置src的时候，没有设置coverImgUrl，在安卓机上，即时在onPlay函数里有设置新的coverImgUrl，但是切换音频后，新的音频背景图是没有的，所以必须在设置src的时候也设置上coverImgUrl
+
+
+8.音频报错情况处理
+
+微信小程序官方给出了以下几个错误码，使用 `this.backgroundPlayer.onError` 	去处理提示给用户
+
+```$xslt
+
+10001 系统错误
+10002 网络错误
+10003 文件错误
+10004 格式错误
+-1 未知错误
+
+```
+
+什么时候会报错呢
+
+- 可能是当前网络问题
+
+- 可能是音频url错误
+
+
+
+9.音频加载过程，使用 `this.backgroundPlayer.onWaiting` 去处理
+
+```$xslt
+// 增加一个data waiting 用它来标识loading过程
+this.backgroundPlayer.onWaiting(() => {
+	that.setData({waiting: true})
+});
+
+// 在音频可以播放的时候，把waiting置未false
+
+this.backgroundPlayer.onTimeUpdate(() => {
+	that.setData({
+		waiting: false
+	})
+});
+```
+
+
+8.自定义组件
+
+微信小程序提供了一些toast、loading等组件，但是这些组件的样式都是固定的，有时候并不能满足我们的需求，这个时候就需要我们自定义组件了
+
+新建一个通用的文件夹	`common` 来表示自己定义的组件
+
+```$xslt
+// toast.wxml 中
+<template name="toast">
+  <block wx:if="{{toast.show}}">
+    <view class="toast-wrap">
+      <view class="toast-content">{{toast.content}}</view>
+    </view>
+  </block>
+</template>
+
+// toast.js 中
+function toast(params) {
+  const that = getCurrentPages()[getCurrentPages().length - 1];
+  setTimeout(() => {
+    that.setData({
+      toast: {
+        show: false,
+      }
+    });
+  }, params.duration || 2000);
+  that.setData({
+    toast: {
+      show: params.show,
+      content: params.content
+    }
+  })
+}
+
+module.exports = {
+  toast
+};
+
+// 如何引用呢
+
+// 在需要使用的页面中
+
+<import src="../../common/toast/toast.wxml"/>
+<template is="toast" data="{{toast}}"/>
+
+// 同时，将wxss引入到app.wxss中
+
+在需要的时候调用即可
+
+const toast = require('../../common/toast/toast');
+
+toast.toast({
+	show: true,
+	content: '报错啦'
+});
+
+```
 
 
 ### 总结
@@ -234,7 +343,7 @@ next() {
 	比如，当前页面是player播放器，该页面上有一个按钮链接到一个新的页面（播放列表页面），在这个播放列表页面里面，点击播放列表中的任何一个音频切换音频或者点击当前的音频，都要回到player播放器这个页面，这个时候只能使用 navigateTo 到player，这个player跟一开始的那个player不是同一个页面，如果点击返回按钮的话回到最初的player页面，那个页面会维持在音频切换前的状态，而不会根据切换后的音频的状态展示页面和音频进度之类的，这个时候的解决方案就是使用onShow去写；
 而且这种情况还会造成另外一种情况就是点击player上面的播放列表，在播放列表再切换音频到player页面，再次进入到播放列表页面，以此循环，会使得navigate的页面太多，而微信小程序只允许5层，这个会导致用户这样连续点的话到后面就无法点击了，暂时没有什么好的解决方案，但是有一种方案可以尝试一下，就是将player和播放列表放在同一个页面，但是会有另外一个问题，在播放列表上点击返回按钮会直接回到player之前的页面，而不会回到player页面；如果产品上播放列表是一个不全屏的弹层的话就不会存在这些问题了
 
-
+4.在安卓机上，会一直报 `setbackgroundaudiostate:fail` 的一个错误，暂时无解，查看[解决方案](https://developers.weixin.qq.com/blogdetail?action=get_post_info&lang=zh_CN&token=&docid=b1cfd912cdd224f63577f086507abab6) 但是貌似在安卓机上没啥卵用
 
 
 

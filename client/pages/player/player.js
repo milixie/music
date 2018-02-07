@@ -4,6 +4,7 @@ const Request = require('../../utils/request');
 const config = require('./../../config');
 const wechat = require('../../utils/wechat');
 const data = require('../../utils/data');
+const toast = require('../../common/toast/toast');
 
 const regeneratorRuntime = require('../../utils/regenerate');
 const Promise = require('../../utils/promise');
@@ -17,7 +18,12 @@ Page({
     duration: '00:00',
     progressWidth: 0,
     playing: false,
-    i: 0
+    waiting: true,
+    i: 0,
+    toast: {
+      show: false,
+      content: ''
+    }
   },
   async onLoad() {
     const that = this;
@@ -25,7 +31,6 @@ Page({
     this.setData({
       playerData: data.songs[this.data.i]
     });
-    console.log(this.data.playerData);
     // 给背景音频赋值
     this.backgroundPlayer.src = this.data.playerData.src;
     this.backgroundPlayer.title = this.data.playerData.name;
@@ -47,7 +52,8 @@ Page({
       that.setData({
         duration,
         currentTime,
-        progressWidth
+        progressWidth,
+        waiting: false
       });
     });
 
@@ -57,6 +63,39 @@ Page({
         playing: false
       })
     });
+
+    this.backgroundPlayer.onWaiting(() => {
+      this.setData({
+        waiting: true
+      });
+    });
+
+    this.backgroundPlayer.onError((res) => {
+      let msg = '';
+      switch (res.errCode) {
+        case 10001:
+          msg = '系统错误';
+          break;
+        case 10002:
+          msg = '网络错误';
+          break;
+        case 10003:
+          msg = '文件错误';
+          break;
+        case 10004:
+          msg = '格式错误';
+          break;
+        default:
+          msg = '未知错误';
+          break;
+      }
+      toast.toast({
+        show: true,
+        content: msg
+      });
+      that.setData({waiting: true});
+    });
+
     // 音频背景图旋转动画
     let i = 1;
     this.animation = wechat.createAnimation({
@@ -69,7 +108,7 @@ Page({
     this.setData({
       animateData: that.animation.export()
     });
-    setInterval(() => {
+    this.timer = setInterval(() => {
       i++;
       that.animation.rotate(360 * i).step({duration: 3000});
       that.setData({
@@ -148,7 +187,10 @@ Page({
 
   prev() {
     if (this.data.i === 0) {
-      console.log('已经是第一首');
+      toast.toast({
+        show: true,
+        content: '已经是第一首'
+      });
       return;
     }
     const currentIndex = this.data.i - 1;
@@ -159,14 +201,16 @@ Page({
         playerData: data.songs[currentIndex],
         i: currentIndex
       });
-      console.log(data.songs[currentIndex]);
     }
 
   },
 
   next() {
-    if (this.data.i === data.songs && data.songs.length - 1) {
-      console.log('已经是最后一首');
+    if (this.data.i === Number(data.songs && data.songs.length - 1)) {
+      toast.toast({
+        show: true,
+        content: '已经是最后一首'
+      });
       return;
     }
     const currentIndex = this.data.i + 1;

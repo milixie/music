@@ -42,6 +42,19 @@
       </block>
     </view>
     <view class="next" bindtap="next"><text class="icon iconfont icon-nvxingicon-xiayiji"></text></view>
-    <view class="player-list"><text class="icon iconfont icon-nvxingicon-bofangliebiao"></text></view>
+    <view class="player-list" bindtap="showPlayerList"><text class="icon iconfont icon-nvxingicon-bofangliebiao"></text></view>
+  </view>
+</view>
+
+<view class="player-list-wrap" wx:if="{{showList}}">
+  <view class="mask" bindtap="hidePlayerList"></view>
+  <view class="player-list col-flex">
+    <view class="head-bar">播放列表</view>
+    <scroll-view scroll-y="true" class="flex1 list">
+      <block wx:for="{{playerList}}" wx:key="{{item.id}}">
+        <view class="sub-list {{playerData.id === item.id ? 'active': ''}}" data-id="{{item.id}}" bindtap="switchPlayer">{{item.name}}</view>
+      </block>
+    </scroll-view>
+    <view class="close" bindtap="hidePlayerList">关闭</view>
   </view>
 </view>

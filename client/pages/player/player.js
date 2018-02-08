@@ -14,6 +14,7 @@ Page({
   data: {
     animateData: {},
     playerData: {},
+    playerList: data.songs,
     currentTime: '00:00',
     duration: '00:00',
     progressWidth: 0,
@@ -24,7 +25,8 @@ Page({
     toast: {
       show: false,
       content: ''
-    }
+    },
+    showList: false
   },
   async onLoad() {
     const that = this;
@@ -32,10 +34,14 @@ Page({
     this.setData({
       playerData: data.songs[this.data.i]
     });
-    // 给背景音频赋值
-    this.backgroundPlayer.src = this.data.playerData.src;
-    this.backgroundPlayer.title = this.data.playerData.name;
-    this.backgroundPlayer.coverImgUrl = this.data.playerData.image;
+
+    // 如果当前有音频
+    if (!this.backgroundPlayer.src || this.backgroundPlayer.src !== this.data.playerData.src) {
+      // 给背景音频赋值
+      this.backgroundPlayer.src = this.data.playerData.src;
+      this.backgroundPlayer.title = this.data.playerData.name;
+      this.backgroundPlayer.coverImgUrl = this.data.playerData.image;
+    }
     this.duration = this.backgroundPlayer.duration || 0;
 
     // 音频开始播放
@@ -63,7 +69,8 @@ Page({
         duration,
         currentTime,
         progressWidth,
-        waiting: false
+        waiting: false,
+        playing: true
       });
     });
 
@@ -86,7 +93,6 @@ Page({
         that.backgroundPlayer.coverImgUrl = that.data.playerData.image;
       } else {
         const { duration } = this.setProgress(that.duration, 0);
-        console.log(duration, '---d')
         that.setData({
           duration
         });
@@ -173,7 +179,7 @@ Page({
   touchStartProgress(e) {
     this.setData({ drag: true });
     this.touchStart = e.changedTouches[0].pageX;
-    this.progress = parseInt(this.data.progressWidth * 250 / 100);
+    this.progress = parseInt(this.data.progressWidth * utils.rpxIntoPx(500) / 100);
   },
   /**
    * 拖拽中，记录当前的pageX，并且与开始拖拽的点以及播放的当前进度条长度进行计算，得出拖拽的长度，重设播放进度条
@@ -181,12 +187,12 @@ Page({
    */
   touchMoveProgress(e) {
     let spacing = this.progress + e.changedTouches[0].pageX - this.touchStart;
-    if (spacing >= 250) {
-      spacing = 250;
+    if (spacing >= utils.rpxIntoPx(500)) {
+      spacing = utils.rpxIntoPx(500);
     } else if (spacing <= 0) {
       spacing = 0;
     }
-    const progressWidth = parseFloat(spacing / 250 * 100).toFixed(2);
+    const progressWidth = parseFloat(spacing / utils.rpxIntoPx(500) * 100).toFixed(2);
     this.setData({
       progressWidth
     });
@@ -197,12 +203,12 @@ Page({
    */
   touchEndProgress(e) {
     let spacing = this.progress + e.changedTouches[0].pageX - this.touchStart;
-    if (spacing >= 250) {
-      spacing = 250;
+    if (spacing >= utils.rpxIntoPx(500)) {
+      spacing = utils.rpxIntoPx(500);
     } else if (spacing <= 0) {
       spacing = 0;
     }
-    const progressWidth = parseFloat(spacing / 250 * 100).toFixed(2);
+    const progressWidth = parseFloat(spacing / utils.rpxIntoPx(500) * 100).toFixed(2);
     this.setData({
       progressWidth,
       drag: false
@@ -277,5 +283,37 @@ Page({
       console.log(err)
     }
 
+  },
+
+  showPlayerList() {
+    this.setData({
+      showList: true
+    });
+  },
+
+  hidePlayerList() {
+    this.setData({
+      showList: false
+    });
+  },
+
+  switchPlayer(e) {
+    const id = e.currentTarget.dataset.id;
+    if (id === this.data.playerData.id) {
+      this.setData({
+        showList: false
+      });
+      return;
+    }
+    const find = data.songs.find(item => item.id === id);
+    if (find) {
+      this.backgroundPlayer.src = find.src;
+      this.backgroundPlayer.title = find.name;
+      this.backgroundPlayer.coverImgUrl = find.image;
+      this.setData({
+        showList: false,
+        playerData: find
+      });
+    }
   }
 });

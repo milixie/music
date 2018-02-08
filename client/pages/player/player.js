@@ -30,7 +30,65 @@ Page({
   },
   async onLoad() {
     const that = this;
+    // 音频背景图旋转动画
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+    if (this.animation) {
+      this.animation.export();
+    }
+    let i = 1;
+    this.animation = wechat.createAnimation({
+      origin: '50% 50%',
+      duration: 3000,
+      delay: 0,
+      timingFunction: 'linear'
+    });
+    that.animation.rotate(360 * i).step();
+    this.setData({
+      animateData: that.animation.export()
+    });
+    this.timer = setInterval(() => {
+      i++;
+      that.animation.rotate(360 * i).step({duration: 3000});
+      that.setData({
+        animateData: that.animation.export()
+      });
+    }, 2500);
+  },
+
+  onShow() {
+    const that = this;
+    wx.getBackgroundAudioPlayerState({
+      success: res => {
+        switch (res.status) {
+          case 0:
+            that.setData({ playing: false });
+            break;
+          case 1:
+            that.setData({ playing: true });
+            break;
+          default:
+            break;
+        }
+      }
+    });
     this.backgroundPlayer = app.globalData.backgroundPlayer;
+
+    const currentPlayerId = wx.getStorageSync('currentPlayerId');
+    if (currentPlayerId) {
+      const currentI = data.songs.findIndex(item => Number(item.id) === Number(currentPlayerId));
+      if (currentI > -1) {
+        this.setData({
+          playerData: data.songs[currentI],
+          i: currentI
+        });
+      }
+    } else {
+      this.setData({
+        playerData: data.songs[this.data.i]
+      });
+    }
     this.setData({
       playerData: data.songs[this.data.i]
     });
@@ -41,15 +99,24 @@ Page({
       this.backgroundPlayer.src = this.data.playerData.src;
       this.backgroundPlayer.title = this.data.playerData.name;
       this.backgroundPlayer.coverImgUrl = this.data.playerData.image;
+      wx.setStorageSync('currentPlayerId', this.data.playerData.id);
     }
-    this.duration = this.backgroundPlayer.duration || 0;
+    this.duration = this.backgroundPlayer.duration * 1000 || 0;
+    this.currentTime = this.backgroundPlayer.currentTime * 1000 || 0;
+
+    const {duration, currentTime, progressWidth} = this.setProgress(this.duration, this.currentTime);
+    that.setData({
+      duration,
+      currentTime,
+      progressWidth
+    });
 
     // 音频开始播放
     this.backgroundPlayer.onPlay(() => {
       that.setData({
         playing: true
       });
-      this.duration = this.backgroundPlayer.duration || 0;
+      this.duration = this.backgroundPlayer.duration * 1000 || 0;
     });
 
     // 音频播放进度控制
@@ -69,16 +136,18 @@ Page({
         duration,
         currentTime,
         progressWidth,
-        waiting: false,
-        playing: true
+        waiting: false
       });
     });
 
     // 音频暂停后
     this.backgroundPlayer.onPause(() => {
-      that.setData({
-        playing: false
-      })
+      that.setData({ playing: false });
+    });
+
+    // 音频停止后
+    this.backgroundPlayer.onStop(() => {
+      that.setData({ playing: false });
     });
 
     // 自然播放后，自动切换到下一首
@@ -91,6 +160,7 @@ Page({
         that.backgroundPlayer.src = that.data.playerData.src;
         that.backgroundPlayer.title = that.data.playerData.name;
         that.backgroundPlayer.coverImgUrl = that.data.playerData.image;
+        wx.setStorageSync('currentPlayerId', that.data.playerData.id);
       } else {
         const { duration } = this.setProgress(that.duration, 0);
         that.setData({
@@ -136,29 +206,17 @@ Page({
         show: true,
         content: msg
       });
-      that.setData({waiting: true});
+      that.setData({ waiting: true });
     });
-
-    // 音频背景图旋转动画
-    let i = 1;
-    this.animation = wechat.createAnimation({
-      origin: '50% 50%',
-      duration: 3000,
-      delay: 0,
-      timingFunction: 'linear'
-    });
-    that.animation.rotate(360 * i).step();
-    this.setData({
-      animateData: that.animation.export()
-    });
-    this.timer = setInterval(() => {
-      i++;
-      that.animation.rotate(360 * i).step({duration: 3000});
-      that.setData({
-        animateData: that.animation.export()
-      });
-    }, 2500);
   },
+
+  onUnload() {
+    if (this.animation) {
+      this.animation.export();
+    }
+    clearInterval(this.timer);
+  },
+
   /**
    * 设置进度函数
    * @param duration
@@ -243,6 +301,7 @@ Page({
       this.backgroundPlayer.src = data.songs[currentIndex].src;
       this.backgroundPlayer.title = data.songs[currentIndex].name;
       this.backgroundPlayer.coverImgUrl = data.songs[currentIndex].image;
+      wx.setStorageSync('currentPlayerId', data.songs[currentIndex].id);
       this.setData({
         playerData: data.songs[currentIndex],
         i: currentIndex
@@ -264,6 +323,7 @@ Page({
       this.backgroundPlayer.src = data.songs[currentIndex].src;
       this.backgroundPlayer.title = data.songs[currentIndex].name;
       this.backgroundPlayer.coverImgUrl = data.songs[currentIndex].image;
+      wx.setStorageSync('currentPlayerId', data.songs[currentIndex].id);
       this.setData({
         playerData: data.songs[currentIndex],
         i: currentIndex
@@ -305,14 +365,16 @@ Page({
       });
       return;
     }
-    const find = data.songs.find(item => item.id === id);
-    if (find) {
-      this.backgroundPlayer.src = find.src;
-      this.backgroundPlayer.title = find.name;
-      this.backgroundPlayer.coverImgUrl = find.image;
+    const index = data.songs.findIndex(item => item.id === id);
+    if (index > -1) {
+      this.backgroundPlayer.src = data.songs[index].src;
+      this.backgroundPlayer.title = data.songs[index].name;
+      this.backgroundPlayer.coverImgUrl = data.songs[index].image;
+      wx.setStorageSync('currentPlayerId', data.songs[index].id);
       this.setData({
         showList: false,
-        playerData: find
+        i: index,
+        playerData: data.songs[index]
       });
     }
   }

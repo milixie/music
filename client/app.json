@@ -1,7 +1,8 @@
 {
   "pages": [
     "pages/test/test",
-    "pages/player/player"
+    "pages/player/player",
+    "pages/video/video"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FFFFFF",

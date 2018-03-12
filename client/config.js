@@ -6,7 +6,7 @@ const config = {
     gzid: 4,
   },
   test: {
-    host: 'http://test.weapp.5wei.com',
+    host: 'http://www.weather.com.cn',
     gzid: 4,
   },
   beta: {

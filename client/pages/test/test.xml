@@ -1,3 +1,4 @@
 <view>
   <button bindtap="linkToPlayer">链接到音频播放器</button>
+  <button bindtap="getWeather">获取天气情况</button>
 </view>

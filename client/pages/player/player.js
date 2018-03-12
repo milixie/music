@@ -34,13 +34,10 @@ Page({
     if (this.timer) {
       clearInterval(this.timer);
     }
-    if (this.animation) {
-      this.animation.export();
-    }
     let i = 1;
     this.animation = wechat.createAnimation({
       origin: '50% 50%',
-      duration: 3000,
+      duration: 30000,
       delay: 0,
       timingFunction: 'linear'
     });
@@ -50,11 +47,11 @@ Page({
     });
     this.timer = setInterval(() => {
       i++;
-      that.animation.rotate(360 * i).step({duration: 3000});
+      that.animation.rotate(360 * i).step({duration: 30000});
       that.setData({
         animateData: that.animation.export()
       });
-    }, 2500);
+    }, 26000);
   },
 
   onShow() {
